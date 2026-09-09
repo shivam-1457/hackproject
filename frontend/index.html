@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kisan2Consumer - Direct Farm-to-Consumer Agri-Marketplace (SIH26033)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <!-- Google Font Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        🌾 Kisan<span>2</span>Consumer
+        <span class="sih-tag">SIH 2026 • SIH26033</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="marketplace.html">Produce Catalog</a></li>
+        <li><a href="marketplace.html?category=Fresh+Vegetables">Vegetables</a></li>
+        <li><a href="marketplace.html?category=Fresh+Fruits">Fruits</a></li>
+        <li><a href="marketplace.html?category=Grains+%26+Cereals">Grains</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected dynamically by api.js -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-pill">
+          <span>🇮🇳 Smart India Hackathon 2026 Initiative</span>
+        </div>
+        <h1>Connecting Indian <span>Farmers Directly</span> to Consumers</h1>
+        <p>
+          Eliminating middlemen to ensure <strong>fair remuneration for hard-working kisans</strong> and <strong>100% fresh, traceable, pesticide-free harvest</strong> delivered to consumer households at wholesale rates.
+        </p>
+        <div class="hero-buttons">
+          <a href="marketplace.html" class="btn btn-accent">🛒 Explore Fresh Produce</a>
+          <a href="auth.html?role=farmer" class="btn btn-outline" style="color: white; border-color: white;">🚜 Register as Farmer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem Statement & Solution Highlights -->
+  <section class="features-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Why Kisan2Consumer?</h2>
+        <p>Solving core challenges of the Indian agricultural supply chain (SIH26033)</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🚫</div>
+          <h3>Zero Middlemen & Brokers</h3>
+          <p>Traditional mandis take up to 40% margin. We connect consumers straight to the farm gate for maximum farmer profits.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📍</div>
+          <h3>Geolocated Farm Traceability</h3>
+          <p>Interactive GPS mapping lets consumers pinpoint the exact farm, soil region, and village where their food is cultivated.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Damaged Goods Protection</h3>
+          <p>Dedicated dispute & complaint resolution. If produce is damaged in transit, consumers receive immediate refunds or replacements.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💳</div>
+          <h3>Simulated Instant Escrow</h3>
+          <p>Seamless UPI, Card, and NetBanking simulation ensuring safe payouts to farmers once orders are confirmed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Featured Produce Section -->
+  <section style="padding: 40px 0 60px;">
+    <div class="container">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px;">
+        <div>
+          <h2 style="font-size: 1.8rem; color: var(--primary-dark);">🌿 Farm-Fresh Arrivals</h2>
+          <p style="color: var(--text-muted);">Directly sourced from verified farms across India</p>
+        </div>
+        <a href="marketplace.html" class="btn btn-outline btn-sm">View Full Catalog →</a>
+      </div>
+
+      <div id="featured-products-grid" class="products-grid">
+        <!-- Loaded dynamically from API -->
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
+          Loading fresh farm produce...
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kisan Callout Banner -->
+  <section style="background: #e8f5e9; padding: 60px 0; border-top: 1px solid #c8e6c9; border-bottom: 1px solid #c8e6c9;">
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 30px;">
+      <div style="max-width: 600px;">
+        <h2 style="font-size: 2rem; color: var(--primary-dark); margin-bottom: 12px;">Are You an Agricultural Producer?</h2>
+        <p style="color: #2e7d32; font-size: 1.05rem; margin-bottom: 20px;">
+          List your wheat, vegetables, spices, or dairy on Kisan2Consumer. Receive direct consumer orders, decide your own fair price, and manage dispatch from your personalized dashboard.
+        </p>
+        <a href="auth.html?role=farmer" class="btn btn-primary">Join as Verified Farmer Today →</a>
+      </div>
+      <div style="display: flex; gap: 20px; text-align: center;">
+        <div style="background: white; padding: 25px 30px; border-radius: 12px; box-shadow: var(--shadow-sm);">
+          <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">0%</div>
+          <div style="font-size: 0.9rem; color: var(--text-muted);">Commission Fees</div>
+        </div>
+        <div style="background: white; padding: 25px 30px; border-radius: 12px; box-shadow: var(--shadow-sm);">
+          <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">24h</div>
+          <div style="font-size: 0.9rem; color: var(--text-muted);">Direct Payout</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3 style="color: white; margin-bottom: 12px;">🌾 Kisan2Consumer</h3>
+          <p style="font-size: 0.9rem; line-height: 1.6; color: #94a3b8;">
+            A next-generation direct-to-consumer agricultural platform designed for Smart India Hackathon 2026 (Problem Statement SIH26033). Empowering kisans and promoting fresh, affordable nutrition.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Marketplace</h4>
+          <ul>
+            <li><a href="marketplace.html?category=Grains+%26+Cereals">Grains & Cereals</a></li>
+            <li><a href="marketplace.html?category=Fresh+Vegetables">Fresh Vegetables</a></li>
+            <li><a href="marketplace.html?category=Fresh+Fruits">Fresh Fruits</a></li>
+            <li><a href="marketplace.html?category=Spices+%26+Herbs">Spices & Herbs</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="auth.html?role=farmer">Farmer Registration</a></li>
+            <li><a href="auth.html?role=consumer">Consumer Sign Up</a></li>
+            <li><a href="verify-email.html">Email Verification</a></li>
+            <li><a href="http://localhost:8000/docs" target="_blank">FastAPI Backend Docs</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Dispute & Security</h4>
+          <ul>
+            <li><a href="#">Quality Assurance Policy</a></li>
+            <li><a href="#">Damaged Goods Redressal</a></li>
+            <li><a href="#">Secure Token Verification</a></li>
+            <li><a href="#">Farmer Fair Pricing Guarantee</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © 2026 Kisan2Consumer Platform • SIH 2026 Problem Statement SIH26033. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    async function loadFeaturedProduce() {
+      const container = document.getElementById("featured-products-grid");
+      try {
+        const products = await apiRequest("/api/products");
+        if (!products || products.length === 0) {
+          container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 30px;">No produce listings available right now.</div>`;
+          return;
+        }
+
+        container.innerHTML = products.slice(0, 6).map(prod => `
+          <div class="product-card">
+            <div class="product-img-wrap">
+              <img src="${prod.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=80'}" alt="${prod.title}">
+              ${prod.is_organic ? '<div class="organic-badge">🌱 Organic</div>' : ''}
+              ${prod.distance_km ? `<div class="distance-badge">📍 ${prod.distance_km} km</div>` : ''}
+            </div>
+            <div class="product-body">
+              <div class="product-cat">${prod.category}</div>
+              <h3 class="product-title">${prod.title}</h3>
+              <div class="product-farm">
+                🚜 ${prod.farmer ? (prod.farmer.farm_name || prod.farmer.full_name) : 'Local Farm'}
+                • ${prod.farm_location_name || (prod.farmer ? prod.farmer.farm_city : 'India')}
+              </div>
+              <div class="rating-row">
+                <span class="rating-stars">★ ${prod.average_rating > 0 ? prod.average_rating : 'New'}</span>
+                <span>(${prod.total_reviews} reviews)</span>
+              </div>
+              <div class="product-footer">
+                <div class="product-price">₹${prod.price_per_unit} <span>/ ${prod.unit}</span></div>
+                <a href="product-detail.html?id=${prod.id}" class="btn btn-outline btn-sm">View Produce</a>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      } catch (err) {
+        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: red;">Failed to load products: ${err.message}. Ensure backend is running on port 8000.</div>`;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadFeaturedProduce);
+  </script>
+</body>
+</html>

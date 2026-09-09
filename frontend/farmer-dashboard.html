@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Dashboard - Kisan2Consumer (SIH26033)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        🌾 Kisan<span>2</span>Consumer
+        <span class="sih-tag">Farmer Portal</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html">Marketplace</a></li>
+        <li><a href="farmer-dashboard.html" class="active">Farmer Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected by api.js -->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="dashboard-sidebar">
+        <div class="user-profile-summary">
+          <div class="avatar-circle">🚜</div>
+          <h3 id="farmer-display-name" style="font-size: 1.15rem; margin-bottom: 4px;">Kisan Producer</h3>
+          <p id="farmer-farm-name" style="color: var(--primary); font-weight: 600; font-size: 0.85rem;"></p>
+          <p id="farmer-location-tag" style="color: var(--text-muted); font-size: 0.8rem;"></p>
+        </div>
+
+        <ul class="dash-menu">
+          <li><button class="dash-menu-item active" id="tab-crops-btn">🌾 My Crop Listings</button></li>
+          <li><button class="dash-menu-item" id="tab-orders-btn">📦 Orders Received</button></li>
+          <li><button class="dash-menu-item" id="tab-complaints-btn">⚠️ Disputes & Complaints</button></li>
+        </ul>
+      </aside>
+
+      <!-- Main Dashboard Content -->
+      <main class="dashboard-content">
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Active Crop Listings</div>
+            <div class="stat-val" id="stat-crops">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Orders Received</div>
+            <div class="stat-val" id="stat-orders">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Farm Produce Revenue</div>
+            <div class="stat-val" id="stat-revenue">₹0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Open Complaints</div>
+            <div class="stat-val" id="stat-complaints" style="color: var(--warning);">0</div>
+          </div>
+        </div>
+
+        <!-- Section 1: Crop Listings -->
+        <section id="section-crops">
+          <div class="dash-header">
+            <div>
+              <h2 style="color: var(--primary-dark); font-size: 1.4rem;">My Harvest Listings</h2>
+              <p style="color: var(--text-muted); font-size: 0.88rem;">Manage your active crops, prices, and available stocks</p>
+            </div>
+            <button id="btn-add-crop" class="btn btn-primary btn-sm">+ Add New Crop</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Produce</th>
+                  <th>Category</th>
+                  <th>Price / Unit</th>
+                  <th>Available Stock</th>
+                  <th>Rating</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="farmer-products-table">
+                <tr><td colspan="7" style="text-align: center; padding: 25px;">Loading crop listings...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Section 2: Orders Received -->
+        <section id="section-orders" style="display: none;">
+          <div class="dash-header">
+            <div>
+              <h2 style="color: var(--primary-dark); font-size: 1.4rem;">Orders Received from Consumers</h2>
+              <p style="color: var(--text-muted); font-size: 0.88rem;">Update dispatch and delivery status for each order</p>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Consumer Info</th>
+                  <th>Produce Details</th>
+                  <th>Revenue</th>
+                  <th>Status</th>
+                  <th>Update Dispatch</th>
+                </tr>
+              </thead>
+              <tbody id="farmer-orders-table">
+                <tr><td colspan="6" style="text-align: center; padding: 25px;">Loading orders...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Section 3: Customer Complaints -->
+        <section id="section-complaints" style="display: none;">
+          <div class="dash-header">
+            <div>
+              <h2 style="color: var(--primary-dark); font-size: 1.4rem;">Damaged Goods & Disputes</h2>
+              <p style="color: var(--text-muted); font-size: 0.88rem;">Review reports raised by consumers and resolve claims</p>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Complaint ID</th>
+                  <th>Order #</th>
+                  <th>Issue Category</th>
+                  <th>Description</th>
+                  <th>Requested Resolution</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="farmer-complaints-table">
+                <tr><td colspan="7" style="text-align: center; padding: 25px;">Loading complaints...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Add New Crop Modal -->
+  <div id="add-crop-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🌾 Add New Produce Listing</h3>
+        <button class="modal-close-btn" id="close-crop-modal">&times;</button>
+      </div>
+      <form id="add-crop-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="crop-title">Produce Title</label>
+            <input type="text" id="crop-title" class="form-control" placeholder="e.g. Fresh Organic Alphonso Mangoes" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="crop-category">Category</label>
+              <select id="crop-category" class="form-control" required>
+                <option value="Fresh Vegetables">Fresh Vegetables</option>
+                <option value="Fresh Fruits">Fresh Fruits</option>
+                <option value="Grains & Cereals">Grains & Cereals</option>
+                <option value="Pulses & Lentils">Pulses & Lentils</option>
+                <option value="Dairy & Organic Milk">Dairy & Organic Milk</option>
+                <option value="Spices & Herbs">Spices & Herbs</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="crop-unit">Selling Unit</label>
+              <select id="crop-unit" class="form-control" required>
+                <option value="kg">kg (Kilogram)</option>
+                <option value="quintal">quintal (100 kg)</option>
+                <option value="crate">crate</option>
+                <option value="dozen">dozen</option>
+                <option value="liter">liter</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="crop-price">Price per Unit (₹)</label>
+              <input type="number" id="crop-price" class="form-control" min="1" step="0.5" placeholder="e.g. 45" required>
+            </div>
+            <div class="form-group">
+              <label for="crop-stock">Stock Quantity Available</label>
+              <input type="number" id="crop-stock" class="form-control" min="1" step="1" placeholder="e.g. 500" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="crop-harvest">Harvest Date</label>
+              <input type="date" id="crop-harvest" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="crop-image">Produce Image URL (or upload below)</label>
+              <input type="url" id="crop-image" class="form-control" placeholder="https://images.unsplash.com/...">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="crop-image-file">📷 Direct Photo Upload from Farm (Device)</label>
+            <input type="file" id="crop-image-file" accept="image/*" class="form-control">
+            <div id="crop-image-preview-container" style="display:none; margin-top: 8px;">
+              <img id="crop-image-preview" src="" style="max-height: 100px; border-radius: 6px; object-fit: cover; border: 1px solid #cbd5e1;">
+              <span id="upload-status-text" style="font-size: 0.8rem; color: var(--primary); margin-left: 8px;"></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="crop-desc">Description & Quality Highlights</label>
+            <textarea id="crop-desc" class="form-control" rows="3" placeholder="Describe variety, taste, harvesting method, pesticide-free practices..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="crop-organic"> 🌿 Certified Organic Produce
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-crop-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="submit-crop-btn">Publish Crop Listing</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Crop Modal -->
+  <div id="edit-crop-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✏️ Edit Produce Listing</h3>
+        <button class="modal-close-btn" id="close-edit-modal">&times;</button>
+      </div>
+      <form id="edit-crop-form">
+        <div class="modal-body">
+          <input type="hidden" id="edit-crop-id">
+          <div class="form-group">
+            <label for="edit-crop-title">Produce Title</label>
+            <input type="text" id="edit-crop-title" class="form-control" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-crop-category">Category</label>
+              <select id="edit-crop-category" class="form-control" required>
+                <option value="Fresh Vegetables">Fresh Vegetables</option>
+                <option value="Fresh Fruits">Fresh Fruits</option>
+                <option value="Grains & Cereals">Grains & Cereals</option>
+                <option value="Pulses & Lentils">Pulses & Lentils</option>
+                <option value="Dairy & Organic Milk">Dairy & Organic Milk</option>
+                <option value="Spices & Herbs">Spices & Herbs</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="edit-crop-unit">Selling Unit</label>
+              <select id="edit-crop-unit" class="form-control" required>
+                <option value="kg">kg (Kilogram)</option>
+                <option value="quintal">quintal (100 kg)</option>
+                <option value="crate">crate</option>
+                <option value="dozen">dozen</option>
+                <option value="liter">liter</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edit-crop-price">Price per Unit (₹)</label>
+              <input type="number" id="edit-crop-price" class="form-control" min="1" step="0.5" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-crop-stock">Stock Quantity Available</label>
+              <input type="number" id="edit-crop-stock" class="form-control" min="0" step="1" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-crop-image">Produce Image URL</label>
+            <input type="url" id="edit-crop-image" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="edit-crop-image-file">Update Photo (Device Upload)</label>
+            <input type="file" id="edit-crop-image-file" accept="image/*" class="form-control">
+            <div id="edit-image-preview-container" style="display:none; margin-top: 8px;">
+              <img id="edit-image-preview" src="" style="max-height: 80px; border-radius: 6px; object-fit: cover;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-crop-desc">Description & Highlights</label>
+            <textarea id="edit-crop-desc" class="form-control" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="edit-crop-organic"> 🌿 Certified Organic Produce
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-edit-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dispute Resolution Modal -->
+  <div id="resolve-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3>Dispute Resolution</h3>
+        <button class="modal-close-btn" id="close-resolve-modal">&times;</button>
+      </div>
+      <form id="resolve-form">
+        <div class="modal-body">
+          <input type="hidden" id="resolve-complaint-id">
+          <div class="form-group">
+            <label>Select Resolution Decision</label>
+            <select id="resolve-status" class="form-control" required>
+              <option value="RESOLVED_REFUND">Approve Full / Partial Refund</option>
+              <option value="RESOLVED_REPLACED">Dispatch Fresh Produce Replacement</option>
+              <option value="UNDER_INVESTIGATION">Mark Under Investigation with Logistics</option>
+              <option value="REJECTED">Reject Complaint (Produce in Order)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Resolution Remarks for Consumer</label>
+            <textarea id="resolve-notes" class="form-control" rows="3" placeholder="Explain the decision or note the refund transaction details..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-resolve-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Submit Decision</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/farmer.js"></script>
+</body>
+</html>

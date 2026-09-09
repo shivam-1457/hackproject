@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification - Kisan2Consumer (SIH26033)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .verify-box {
+      max-width: 520px;
+      margin: 60px auto;
+      background: white;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      padding: 35px 30px;
+      text-align: center;
+    }
+    .verify-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 20px;
+    }
+    .status-alert {
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .status-success {
+      background: #e8f5e9;
+      color: #1b5e20;
+      border: 1px solid #c8e6c9;
+    }
+    .status-error {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        🌾 Kisan<span>2</span>Consumer
+        <span class="sih-tag">Security & Verification</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html">Produce Catalog</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected by api.js -->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="verify-box">
+      <div class="verify-icon" id="status-icon">✉️</div>
+      <h2 style="font-size: 1.6rem; color: var(--primary-dark); margin-bottom: 8px;">Token-Based Email Verification</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 15px;">
+        To ensure platform integrity and verify authentic kisans and buyers, verification emails are dispatched from <strong>kisan2consumerhelp@gmail.com</strong>.
+      </p>
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 20px;">
+        Verification Service: <strong>kisan2consumerhelp@gmail.com</strong>
+      </div>
+
+      <form id="verify-form" style="text-align: left;">
+        <div class="form-group">
+          <label for="verification-token">Enter Email Verification Token</label>
+          <input type="text" id="verification-token" class="form-control" placeholder="e.g. ymgxyIeN0gmpS8QrgxIIF8jy_j0R8J3m..." required>
+        </div>
+
+        <button type="submit" id="btn-verify" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 10px;">
+          Verify & Activate Account
+        </button>
+      </form>
+
+      <!-- Status Alerts -->
+      <div id="alert-success" class="status-alert status-success">
+        <strong>🎉 Verification Successful!</strong><br>
+        Your email has been verified. Your account is now fully active.
+        <div style="margin-top: 15px;">
+          <a href="auth.html" class="btn btn-primary btn-sm">Proceed to Sign In →</a>
+        </div>
+      </div>
+
+      <div id="alert-error" class="status-alert status-error">
+        <strong id="error-title">Verification Failed</strong><br>
+        <span id="error-message">The token provided is invalid or has expired.</span>
+      </div>
+
+      <!-- Dev Helper Widget -->
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--border-color); font-size: 0.85rem; color: var(--text-muted);">
+        <p>Testing locally without an active SMTP server?</p>
+        <button id="btn-fetch-dev-token" class="btn btn-outline btn-sm" style="margin-top: 8px;">
+          🔍 Auto-Fill Latest Dev Token
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tokenParam = urlParams.get("token");
+
+      if (tokenParam) {
+        document.getElementById("verification-token").value = tokenParam;
+        // Auto submit if token is present in URL
+        executeVerification(tokenParam);
+      }
+
+      document.getElementById("verify-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const token = document.getElementById("verification-token").value.trim();
+        if (token) {
+          executeVerification(token);
+        }
+      });
+
+      document.getElementById("btn-fetch-dev-token").addEventListener("click", fetchDevToken);
+    });
+
+    async function executeVerification(token) {
+      const btn = document.getElementById("btn-verify");
+      const alertSuccess = document.getElementById("alert-success");
+      const alertError = document.getElementById("alert-error");
+      const statusIcon = document.getElementById("status-icon");
+
+      btn.disabled = true;
+      btn.textContent = "Verifying Token...";
+      alertSuccess.style.display = "none";
+      alertError.style.display = "none";
+
+      try {
+        const res = await apiRequest("/api/auth/verify-email", {
+          method: "POST",
+          body: JSON.stringify({ token })
+        });
+
+        statusIcon.textContent = "✅";
+        statusIcon.style.background = "#e8f5e9";
+        statusIcon.style.color = "#2e7d32";
+        alertSuccess.style.display = "block";
+        document.getElementById("verify-form").style.display = "none";
+        showToast("Account activated successfully!", "success");
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = "Verify & Activate Account";
+        statusIcon.textContent = "❌";
+        statusIcon.style.background = "#ffebee";
+        statusIcon.style.color = "#c62828";
+        alertError.style.display = "block";
+        document.getElementById("error-message").textContent = err.message;
+        showToast(err.message, "error");
+      }
+    }
+
+    async function fetchDevToken() {
+      try {
+        const res = await apiRequest("/api/auth/recent-emails");
+        if (res.emails && res.emails.length > 0) {
+          // Find verification email
+          const verEmail = res.emails.find(e => e.subject.includes("Verify") || e.plain_text.includes("token"));
+          if (verEmail) {
+            // Extract token
+            const match = verEmail.plain_text.match(/token:\s*([A-Za-z0-9_\-]+)/);
+            if (match && match[1]) {
+              document.getElementById("verification-token").value = match[1];
+              showToast("Loaded token from recent emails log!", "success");
+              return;
+            }
+          }
+        }
+        showToast("No verification tokens found in recent log. Please register first.", "info");
+      } catch (err) {
+        showToast("Could not fetch dev token: " + err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>

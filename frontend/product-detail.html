@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produce Details - Kisan2Consumer (SIH26033)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Leaflet CSS for Mini Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin: 40px 0;
+    }
+    .detail-img-box {
+      border-radius: 14px;
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      height: 440px;
+    }
+    .detail-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .farmer-info-card {
+      background: #fdfbf7;
+      border: 1px solid #f0e6d2;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 25px;
+    }
+    .review-card {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 850px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+      .detail-img-box {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        🌾 Kisan<span>2</span>Consumer
+        <span class="sih-tag">Produce Details</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html">Produce Catalog</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected dynamically by api.js -->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" style="padding-bottom: 60px;">
+    <!-- Breadcrumb -->
+    <div style="padding: 20px 0 0; font-size: 0.9rem; color: var(--text-muted);">
+      <a href="marketplace.html" style="color: var(--primary); text-decoration: none;">← Back to Marketplace</a>
+    </div>
+
+    <div id="product-loading" style="text-align: center; padding: 60px; color: var(--text-muted);">
+      Loading produce details...
+    </div>
+
+    <div id="product-content" style="display: none;">
+      <div class="detail-grid">
+        <!-- Left: Image & Mini Farm Map -->
+        <div>
+          <div class="detail-img-box">
+            <img id="p-image" src="" alt="">
+          </div>
+
+          <!-- Farm Geolocation Mini Map -->
+          <div class="farmer-info-card">
+            <h4 style="color: var(--earth); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+              📍 Farm Location & Geotagging (SIH Traceability)
+            </h4>
+            <p id="p-farm-address" style="font-size: 0.9rem; color: #4b5563; margin-bottom: 14px;">
+              <!-- Filled via JS -->
+            </p>
+            <div id="farm-view-map" style="height: 220px; border-radius: 8px;"></div>
+          </div>
+        </div>
+
+        <!-- Right: Details, Pricing, Add to Cart -->
+        <div>
+          <div id="p-organic-badge" style="display: none; margin-bottom: 10px;">
+            <span class="badge badge-delivered" style="font-size: 0.85rem;">🌱 100% Certified Organic</span>
+          </div>
+
+          <span id="p-category" class="product-cat" style="font-size: 0.9rem;"></span>
+          <h1 id="p-title" style="font-size: 2.2rem; color: var(--primary-dark); margin: 8px 0 12px; line-height: 1.2;"></h1>
+
+          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <div class="rating-row" style="margin-bottom: 0; font-size: 1rem;">
+              <span class="rating-stars" id="p-stars">★ 0.0</span>
+              <span id="p-review-count">(0 reviews)</span>
+            </div>
+            <span style="color: #cbd5e1;">•</span>
+            <span id="p-distance" style="font-size: 0.9rem; color: var(--primary); font-weight: 600;"></span>
+          </div>
+
+          <div style="font-size: 2.4rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 20px;">
+            <span id="p-price">₹0</span> <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">/ <span id="p-unit">kg</span></span>
+          </div>
+
+          <p id="p-description" style="color: #475569; font-size: 1.05rem; line-height: 1.7; margin-bottom: 25px;"></p>
+
+          <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem;">
+              <span>Availability:</span>
+              <strong id="p-stock" style="color: var(--primary);">In Stock</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem;">
+              <span>Harvest Date:</span>
+              <strong id="p-harvest">Freshly Harvested</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
+              <span>Direct Kisan:</span>
+              <strong id="p-farmer-name">-</strong>
+            </div>
+          </div>
+
+          <!-- Quantity Selector & Cart Action -->
+          <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 8px; background: white; overflow: hidden;">
+              <button id="qty-minus" style="padding: 10px 16px; border: none; background: none; cursor: pointer; font-size: 1.2rem; font-weight: 700;">-</button>
+              <input type="number" id="order-qty" value="1" min="1" style="width: 60px; text-align: center; border: none; font-size: 1.1rem; font-weight: 700; outline: none;">
+              <button id="qty-plus" style="padding: 10px 16px; border: none; background: none; cursor: pointer; font-size: 1.2rem; font-weight: 700;">+</button>
+            </div>
+
+            <button id="btn-add-cart" class="btn btn-outline" style="flex: 1; padding: 14px 20px;">
+              🛒 Add to Cart
+            </button>
+            <button id="btn-buy-now" class="btn btn-primary" style="flex: 1; padding: 14px 20px;">
+              ⚡ Buy Now
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reviews and Ratings Section -->
+      <div style="margin-top: 50px; border-top: 1px solid var(--border-color); padding-top: 40px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+          <div>
+            <h2 style="color: var(--primary-dark);">Consumer Reviews & Ratings</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Real feedback from verified consumers who ordered this harvest</p>
+          </div>
+        </div>
+
+        <div id="reviews-list">
+          <p style="color: var(--text-muted);">Loading reviews...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/product-detail.js"></script>
+</body>
+</html>

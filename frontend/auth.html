@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Register - Kisan2Consumer (SIH26033)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Leaflet CSS for Map Pin Picker -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    .auth-container {
+      max-width: 580px;
+      margin: 40px auto 60px;
+      background: white;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 16px;
+      text-align: center;
+      background: #f8faf9;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      font-size: 1rem;
+    }
+    .auth-tab.active {
+      background: white;
+      color: var(--primary-dark);
+      border-bottom: 3px solid var(--primary);
+    }
+    .role-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .role-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 2px solid var(--border-color);
+      background: #fafafa;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+    .role-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        🌾 Kisan<span>2</span>Consumer
+        <span class="sih-tag">Portal Access</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html">Produce Catalog</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected by api.js -->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="auth-container">
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login">Sign In</button>
+        <button class="auth-tab" id="tab-register">Register New Account</button>
+      </div>
+
+      <!-- Login Form Panel -->
+      <div id="login-panel" style="padding: 30px;">
+        <h2 style="font-size: 1.5rem; color: var(--primary-dark); margin-bottom: 8px;">Welcome Back!</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">
+          Log in to manage your harvest listings or check your fresh produce orders.
+        </p>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" class="form-control" placeholder="farmer@kisan.in or consumer@email.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 10px;">
+            Sign In to Kisan2Consumer
+          </button>
+        </form>
+
+        <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; font-size: 0.88rem; color: var(--text-muted);">
+          <p>Demo Accounts for Instant Evaluation:</p>
+          <div style="margin-top: 8px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-outline btn-sm" onclick="fillDemo('farmer')">🚜 Demo Farmer</button>
+            <button class="btn btn-outline btn-sm" onclick="fillDemo('consumer')">👤 Demo Consumer</button>
+            <button class="btn btn-outline btn-sm" onclick="fillDemo('admin')" style="color: #1e3a8a; border-color: #1e3a8a;">⚖️ Demo Admin</button>
+          </div>
+          <div style="margin-top: 14px; font-size: 0.8rem; color: #64748b;">
+            Official Verification & Helpdesk: <strong>kisan2consumerhelp@gmail.com</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Register Form Panel -->
+      <div id="register-panel" style="padding: 30px; display: none;">
+        <h2 style="font-size: 1.5rem; color: var(--primary-dark); margin-bottom: 8px;">Create an Account</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+          Direct agricultural trade platform with token-based email verification.
+        </p>
+
+        <!-- Role Selector -->
+        <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">Select Your Role:</label>
+        <div class="role-selector">
+          <div class="role-btn active" id="btn-role-farmer">
+            🚜 Farmer (Kisan)<br>
+            <span style="font-size: 0.75rem; font-weight: 400; color: #555;">I want to sell crops</span>
+          </div>
+          <div class="role-btn" id="btn-role-consumer">
+            👤 Consumer (Grahak)<br>
+            <span style="font-size: 0.75rem; font-weight: 400; color: #555;">I want to buy produce</span>
+          </div>
+        </div>
+
+        <form id="register-form">
+          <div class="form-group">
+            <label for="reg-name">Full Name</label>
+            <input type="text" id="reg-name" class="form-control" placeholder="Rameshwar Patil" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-email">Email Address</label>
+              <input type="email" id="reg-email" class="form-control" placeholder="farmer@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="reg-phone">Mobile Phone</label>
+              <input type="tel" id="reg-phone" class="form-control" placeholder="+91 98765 43210" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-password">Password (min 6 characters)</label>
+            <input type="password" id="reg-password" class="form-control" minlength="6" placeholder="••••••••" required>
+          </div>
+
+          <!-- Farmer-Specific Geolocation Fields -->
+          <div id="farmer-fields">
+            <div class="form-group">
+              <label for="reg-farm-name">Farm / Agricultural Estate Name</label>
+              <input type="text" id="reg-farm-name" class="form-control" placeholder="Patil Organic Agro Fields">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-farm-city">City / District / Mandi</label>
+                <input type="text" id="reg-farm-city" class="form-control" placeholder="Nashik">
+              </div>
+              <div class="form-group">
+                <label for="reg-farm-state">State</label>
+                <input type="text" id="reg-farm-state" class="form-control" placeholder="Maharashtra">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-farm-address">Village / Farm Street Address</label>
+              <input type="text" id="reg-farm-address" class="form-control" placeholder="Gat No. 44, Dindori Road">
+            </div>
+
+            <!-- Interactive Leaflet Map for Pinning Farm Coordinates -->
+            <div class="form-group">
+              <label style="display: flex; justify-content: space-between;">
+                <span>📍 Pin Farm Coordinates on Map (SIH26033 Traceability)</span>
+                <span id="coord-display" style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">Click map to pin</span>
+              </label>
+              <div id="farm-picker-map" style="height: 200px;"></div>
+              <input type="hidden" id="reg-lat">
+              <input type="hidden" id="reg-lng">
+            </div>
+          </div>
+
+          <!-- Consumer-Specific Delivery Fields -->
+          <div id="consumer-fields" style="display: none;">
+            <div class="form-group">
+              <label for="reg-delivery-address">Home / Delivery Address</label>
+              <input type="text" id="reg-delivery-address" class="form-control" placeholder="Flat 402, Green Meadows">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="reg-delivery-city">City</label>
+                <input type="text" id="reg-delivery-city" class="form-control" placeholder="Mumbai">
+              </div>
+              <div class="form-group">
+                <label for="reg-delivery-state">State</label>
+                <input type="text" id="reg-delivery-state" class="form-control" placeholder="Maharashtra">
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-register" class="btn btn-primary" style="width: 100%; padding: 12px; margin-top: 15px;">
+            Register & Send Verification Token
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

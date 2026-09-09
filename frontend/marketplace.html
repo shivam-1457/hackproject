@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produce Marketplace - Kisan2Consumer (SIH26033)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Leaflet CSS for Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        🌾 Kisan<span>2</span>Consumer
+        <span class="sih-tag">Marketplace</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html" class="active">Produce Catalog</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected dynamically by api.js -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Marketplace Header -->
+  <div style="background: white; border-bottom: 1px solid var(--border-color); padding: 25px 0;">
+    <div class="container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+      <div>
+        <h1 style="font-size: 1.85rem; color: var(--primary-dark);">Agricultural Produce Catalog</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Buy freshly harvested crops directly from verified Indian farmers</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button id="btn-near-me" class="btn btn-outline btn-sm">📍 Find Near Me</button>
+        <button id="btn-open-map" class="btn btn-primary btn-sm">🗺️ View Farms Map</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding: 30px 20px;">
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-row">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search crops, wheat, onions, spices...">
+        </div>
+
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer;">
+            <input type="checkbox" id="organic-toggle"> 🌿 Organic Only
+          </label>
+
+          <select id="sort-select" class="form-control" style="width: 190px; padding: 8px 12px;">
+            <option value="newest">Sort: Newest First</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+            <option value="rating">Highest Rated</option>
+            <option value="distance">Nearest Distance</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-pills" id="category-pills">
+        <button class="pill-btn active" data-category="All">All Categories</button>
+        <button class="pill-btn" data-category="Fresh Vegetables">Fresh Vegetables</button>
+        <button class="pill-btn" data-category="Fresh Fruits">Fresh Fruits</button>
+        <button class="pill-btn" data-category="Grains & Cereals">Grains & Cereals</button>
+        <button class="pill-btn" data-category="Pulses & Lentils">Pulses & Lentils</button>
+        <button class="pill-btn" data-category="Spices & Herbs">Spices & Herbs</button>
+      </div>
+    </div>
+
+    <!-- Active Location Status Banner if near me is enabled -->
+    <div id="location-banner" style="display: none; background: #e8f5e9; border: 1px solid #c8e6c9; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; color: #2e7d32; display: flex; align-items: center; justify-content: space-between;">
+      <span id="location-text">📍 Geolocation active: Calculating distances to farms...</span>
+      <button id="clear-location-btn" style="background: none; border: none; color: #c62828; cursor: pointer; font-weight: 600;">Clear</button>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="marketplace-grid" class="products-grid">
+      <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: var(--text-muted);">
+        Fetching fresh produce from farms across India...
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Leaflet Map Modal -->
+  <div id="map-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 850px;">
+      <div class="modal-header">
+        <h3>📍 Direct Farmer Locations & Produce Map</h3>
+        <button class="modal-close-btn" id="close-map-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+          Explore Indian farms supplying fresh produce. Click any farm marker to see listed crops, pricing, and place a direct order.
+        </p>
+        <div id="map" style="height: 440px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" id="close-map-btn">Close Map</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/marketplace.js"></script>
+</body>
+</html>

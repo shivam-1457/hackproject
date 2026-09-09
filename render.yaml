@@ -1,0 +1,32 @@
+services:
+  # Kisan2Consumer Unified Web Application (FastAPI + Static Frontend)
+  - type: web
+    name: hackproject
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: APP_ENV
+        value: production
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: SMTP_FROM_EMAIL
+        value: kisan2consumerhelp@gmail.com
+      - key: SMTP_FROM_NAME
+        value: Kisan2Consumer Helpdesk
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kisan2consumer-postgres
+          property: connectionString
+
+databases:
+  # Managed PostgreSQL Database for Kisan2Consumer
+  - name: kisan2consumer-postgres
+    region: oregon
+    plan: free
+    databaseName: kisan2consumer_db
+    user: kisan2consumer_admin

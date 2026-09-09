@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dispute Portal - Kisan2Consumer</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .admin-badge {
+      background: #1e3a8a;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .dispute-card {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+    .dispute-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+    .dispute-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .dispute-parties {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      background: #f8fafc;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 0.88rem;
+    }
+    @media (max-width: 640px) {
+      .dispute-parties {
+        grid-template-columns: 1fr;
+      }
+    }
+    .party-title {
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .proof-thumb {
+      max-width: 140px;
+      max-height: 100px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      object-fit: cover;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        🌾 Kisan<span>2</span>Consumer
+        <span class="admin-badge">Ombudsman & Admin Desk</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html">Marketplace</a></li>
+        <li><a href="admin-portal.html" class="active">Admin Portal</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected by api.js -->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" style="padding-top: 25px; padding-bottom: 50px;">
+    <!-- Top Welcome Banner -->
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
+      <div>
+        <h1 style="font-size: 1.8rem; color: #1e3a8a; margin: 0 0 6px;">⚖️ Grievance Arbitration & Platform Oversight</h1>
+        <p style="color: var(--text-muted); margin: 0; font-size: 0.95rem;">
+          Arbitrate conflicts between farmers and consumers, enforce quality standards, and oversee platform trade.
+        </p>
+      </div>
+      <div style="background: #e0e7ff; color: #1e3a8a; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
+        Helpdesk Contact: <strong>kisan2consumerhelp@gmail.com</strong>
+      </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="stats-grid" style="margin-bottom: 30px;">
+      <div class="stat-card">
+        <div class="stat-label">Total Farmers</div>
+        <div class="stat-val" id="stat-farmers">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Consumers</div>
+        <div class="stat-val" id="stat-consumers">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Platform Trade GMV</div>
+        <div class="stat-val" id="stat-gmv" style="color: var(--primary);">₹0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Open Disputes / Conflicts</div>
+        <div class="stat-val" id="stat-open-disputes" style="color: var(--danger);">0</div>
+      </div>
+    </div>
+
+    <!-- Admin Tab Controls -->
+    <div class="tabs-nav" style="margin-bottom: 25px;">
+      <button class="tab-btn active" id="tab-disputes-btn">⚠️ Farmer-Consumer Conflict Desk</button>
+      <button class="tab-btn" id="tab-users-btn">👥 User Directory & Verification</button>
+    </div>
+
+    <!-- Section 1: Conflict Resolution Desk -->
+    <section id="section-disputes">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+        <h2 style="font-size: 1.3rem; color: var(--text-color); margin: 0;">Dispute Resolution Registry</h2>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <label style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Status Filter:</label>
+          <select id="filter-dispute-status" class="form-control" style="width: auto; padding: 6px 12px; font-size: 0.85rem;">
+            <option value="ALL">All Disputes</option>
+            <option value="OPEN" selected>Open (Pending Action)</option>
+            <option value="UNDER_INVESTIGATION">Under Investigation</option>
+            <option value="RESOLVED_REFUND">Resolved: Refunded</option>
+            <option value="RESOLVED_REPLACED">Resolved: Replaced</option>
+            <option value="REJECTED">Dismissed / Rejected</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="disputes-list-container">
+        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+          Loading disputes and conflict registry...
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: User Directory -->
+    <section id="section-users" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+        <h2 style="font-size: 1.3rem; color: var(--text-color); margin: 0;">Registered Participants</h2>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <label style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Role:</label>
+          <select id="filter-user-role" class="form-control" style="width: auto; padding: 6px 12px; font-size: 0.85rem;">
+            <option value="ALL">All Roles</option>
+            <option value="farmer">Farmers (Kisans)</option>
+            <option value="consumer">Consumers (Grahaks)</option>
+            <option value="admin">Administrators</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>Farm / City</th>
+              <th>Email Verified</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <tr><td colspan="7" style="text-align: center; padding: 25px;">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Arbitrate Dispute Modal -->
+  <div id="arbitrate-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header" style="background: #1e3a8a; color: white;">
+        <h3 style="margin: 0; font-size: 1.15rem;">⚖️ Ombudsman Arbitration Ruling</h3>
+        <button class="modal-close-btn" id="close-arbitrate-modal" style="color: white;">&times;</button>
+      </div>
+      <form id="arbitrate-form">
+        <div class="modal-body" style="padding: 20px;">
+          <input type="hidden" id="arb-complaint-id">
+
+          <!-- Case Summary Banner -->
+          <div style="background: #f1f5f9; padding: 14px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem;">
+            <div style="font-weight: 700; color: #1e3a8a; margin-bottom: 4px;" id="arb-case-title">Case #--</div>
+            <div id="arb-case-desc" style="color: #475569; margin-bottom: 8px;"></div>
+            <div id="arb-proof-preview"></div>
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 700; color: #1e293b;">Arbitration Ruling / Decision</label>
+            <select id="arb-status" class="form-control" required style="font-weight: 600;">
+              <option value="RESOLVED_REFUND">✅ Approve Consumer Refund (Produce Damaged/Spoiled)</option>
+              <option value="RESOLVED_REPLACED">🌱 Order Replacement Harvest from Farmer</option>
+              <option value="UNDER_INVESTIGATION">🔍 Escalate for Logistics Investigation</option>
+              <option value="REJECTED">❌ Dismiss Complaint (Produce matches order description)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 700; color: #1e293b;">Official Verdict & Reasoning (Sent to Farmer & Consumer)</label>
+            <textarea id="arb-verdict" class="form-control" rows="3" placeholder="Provide clear rationale for the ruling. This decision will be officially emailed to both parties..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label style="font-weight: 700; color: #1e293b;">Resolution Notes & Transaction Ref (Optional)</label>
+            <input type="text" id="arb-notes" class="form-control" placeholder="e.g. Refund transaction ID #REF_84920 issued via UPI">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-arbitrate-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" style="background: #1e3a8a; border-color: #1e3a8a;">
+            Publish Official Verdict ⚖️
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

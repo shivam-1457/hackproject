@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart - Kisan2Consumer (SIH26033)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .cart-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+      margin: 40px 0 60px;
+    }
+    .cart-item-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .cart-item-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #eee;
+    }
+    .cart-summary-box {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      height: fit-content;
+      box-shadow: var(--shadow-sm);
+    }
+    @media (max-width: 800px) {
+      .cart-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        🌾 Kisan<span>2</span>Consumer
+        <span class="sih-tag">Cart</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html">Produce Catalog</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected by api.js -->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div style="padding: 25px 0 0;">
+      <h1 style="font-size: 2rem; color: var(--primary-dark);">Your Fresh Produce Basket</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">Review farm produce before proceeding to direct farmer checkout</p>
+    </div>
+
+    <div class="cart-grid">
+      <!-- Items Column -->
+      <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; box-shadow: var(--shadow-sm);">
+        <div id="cart-items-container">
+          <!-- Populated by JS -->
+          <div style="text-align: center; padding: 40px; color: var(--text-muted);">Loading cart...</div>
+        </div>
+      </div>
+
+      <!-- Summary Column -->
+      <div>
+        <div class="cart-summary-box">
+          <h3 style="font-size: 1.25rem; color: var(--text-dark); margin-bottom: 18px;">Order Bill Summary</h3>
+
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem;">
+            <span style="color: var(--text-muted);">Produce Subtotal</span>
+            <strong id="cart-subtotal">₹0.00</strong>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem;">
+            <span style="color: var(--text-muted);">Farm Logistics & Delivery</span>
+            <span id="cart-delivery" style="color: var(--primary); font-weight: 600;">FREE</span>
+          </div>
+
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 18px;">
+            💡 Free direct-from-farm delivery on orders over ₹500!
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 18px;">
+
+          <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+            <span style="font-size: 1.15rem; font-weight: 700;">Grand Total</span>
+            <span id="cart-grand-total" style="font-size: 1.4rem; font-weight: 800; color: var(--primary-dark);">₹0.00</span>
+          </div>
+
+          <button id="btn-checkout" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">
+            Proceed to Checkout →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCart();
+
+      document.getElementById("btn-checkout").addEventListener("click", () => {
+        const cart = getCart();
+        if (cart.length === 0) {
+          showToast("Your cart is empty!", "warning");
+          return;
+        }
+        if (!isLoggedIn()) {
+          showToast("Please sign in or register to place your order.", "info");
+          setTimeout(() => {
+            window.location.href = "auth.html?role=consumer";
+          }, 1000);
+          return;
+        }
+        window.location.href = "checkout.html";
+      });
+    });
+
+    function renderCart() {
+      const container = document.getElementById("cart-items-container");
+      const cart = getCart();
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 50px 20px;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🧺</div>
+            <h3>Your basket is empty</h3>
+            <p style="color: var(--text-muted); margin: 8px 0 20px;">Explore seasonal produce from local farmers.</p>
+            <a href="marketplace.html" class="btn btn-primary btn-sm">Browse Marketplace</a>
+          </div>
+        `;
+        document.getElementById("cart-subtotal").textContent = "₹0.00";
+        document.getElementById("cart-delivery").textContent = "₹0.00";
+        document.getElementById("cart-grand-total").textContent = "₹0.00";
+        return;
+      }
+
+      let subtotal = 0;
+
+      container.innerHTML = cart.map(item => {
+        const itemTotal = item.price_per_unit * item.quantity;
+        subtotal += itemTotal;
+
+        return `
+          <div class="cart-item-row">
+            <img src="${item.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=150&q=80'}" class="cart-item-img" alt="${item.title}">
+            <div style="flex: 1;">
+              <h4 style="font-size: 1.05rem; margin-bottom: 4px;">${item.title}</h4>
+              <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px;">
+                🚜 ${item.farm_name} • ₹${item.price_per_unit} / ${item.unit}
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;">
+                  <button onclick="changeQty(${item.id}, ${item.quantity - 1})" style="padding: 4px 10px; border: none; background: #f8faf9; cursor: pointer; font-weight: 700;">-</button>
+                  <span style="padding: 4px 12px; font-weight: 600; font-size: 0.9rem;">${item.quantity} ${item.unit}</span>
+                  <button onclick="changeQty(${item.id}, ${item.quantity + 1})" style="padding: 4px 10px; border: none; background: #f8faf9; cursor: pointer; font-weight: 700;">+</button>
+                </div>
+                <button onclick="removeFromCart(${item.id}); renderCart();" style="border: none; background: none; color: var(--danger); font-size: 0.85rem; cursor: pointer;">Remove</button>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 1.15rem; font-weight: 700; color: var(--primary-dark);">₹${itemTotal.toFixed(2)}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const delivery = subtotal >= 500 ? 0 : 40;
+      const grandTotal = subtotal + delivery;
+
+      document.getElementById("cart-subtotal").textContent = `₹${subtotal.toFixed(2)}`;
+      document.getElementById("cart-delivery").textContent = delivery === 0 ? "FREE" : `₹${delivery.toFixed(2)}`;
+      document.getElementById("cart-grand-total").textContent = `₹${grandTotal.toFixed(2)}`;
+    }
+
+    function changeQty(id, newQty) {
+      updateCartQuantity(id, newQty);
+      renderCart();
+    }
+  </script>
+</body>
+</html>

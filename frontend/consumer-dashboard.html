@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consumer Dashboard - Kisan2Consumer (SIH26033)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Leaflet CSS for Map Tracking -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        🌾 Kisan<span>2</span>Consumer
+        <span class="sih-tag">Consumer Portal</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html">Produce Catalog</a></li>
+        <li><a href="consumer-dashboard.html" class="active">My Orders</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected by api.js -->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="dashboard-sidebar">
+        <div class="user-profile-summary">
+          <div class="avatar-circle">👤</div>
+          <h3 id="consumer-name" style="font-size: 1.15rem; margin-bottom: 4px;">Grahak Consumer</h3>
+          <p id="consumer-email" style="color: var(--text-muted); font-size: 0.85rem;"></p>
+          <p id="consumer-city" style="color: var(--primary); font-size: 0.82rem; font-weight: 600;"></p>
+        </div>
+
+        <ul class="dash-menu">
+          <li><button class="dash-menu-item active" id="tab-orders-btn">📦 My Orders & Tracking</button></li>
+          <li><button class="dash-menu-item" id="tab-complaints-btn">⚠️ My Damage Disputes</button></li>
+        </ul>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="dashboard-content">
+        <!-- Section 1: Consumer Orders -->
+        <section id="section-orders">
+          <div class="dash-header">
+            <div>
+              <h2 style="color: var(--primary-dark); font-size: 1.4rem;">My Fresh Farm Orders</h2>
+              <p style="color: var(--text-muted); font-size: 0.88rem;">Track shipment from farm gates, leave ratings, or report damaged produce</p>
+            </div>
+            <a href="marketplace.html" class="btn btn-outline btn-sm">Order More Produce</a>
+          </div>
+
+          <div id="orders-container">
+            <div style="text-align: center; padding: 40px; color: var(--text-muted);">Loading orders...</div>
+          </div>
+        </section>
+
+        <!-- Section 2: Consumer Complaints -->
+        <section id="section-complaints" style="display: none;">
+          <div class="dash-header">
+            <div>
+              <h2 style="color: var(--primary-dark); font-size: 1.4rem;">Dispute & Damage Redressal</h2>
+              <p style="color: var(--text-muted); font-size: 0.88rem;">SIH26033: Consumer protection guarantee against transit spoilage</p>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Case ID</th>
+                  <th>Order #</th>
+                  <th>Issue Reported</th>
+                  <th>Description</th>
+                  <th>Requested Resolution</th>
+                  <th>Dispute Status</th>
+                  <th>Farmer Remarks</th>
+                </tr>
+              </thead>
+              <tbody id="consumer-complaints-table">
+                <tr><td colspan="7" style="text-align: center; padding: 25px;">Loading disputes...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Rating Modal -->
+  <div id="rating-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3>Rate & Review Farm Produce</h3>
+        <button class="modal-close-btn" id="close-rating-modal">&times;</button>
+      </div>
+      <form id="rating-form">
+        <div class="modal-body">
+          <input type="hidden" id="rate-product-id">
+          <input type="hidden" id="rate-order-id">
+          <p id="rate-product-title" style="font-weight: 700; color: var(--primary-dark); margin-bottom: 12px;"></p>
+
+          <label style="font-weight: 600; font-size: 0.9rem;">Select Star Rating (1 to 5):</label>
+          <div class="star-rating-input" id="star-selector">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star active" data-value="5">★</span>
+          </div>
+          <input type="hidden" id="rate-score" value="5">
+
+          <div class="form-group" style="margin-top: 15px;">
+            <label for="rate-text">Your Written Review</label>
+            <textarea id="rate-text" class="form-control" rows="3" placeholder="Share your experience regarding freshness, taste, and packaging..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-rating-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Submit Review</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Complaint / Dispute Modal -->
+  <div id="complaint-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Report Damaged Goods / File Dispute</h3>
+        <button class="modal-close-btn" id="close-complaint-modal">&times;</button>
+      </div>
+      <form id="complaint-form">
+        <div class="modal-body">
+          <input type="hidden" id="comp-order-id">
+          <input type="hidden" id="comp-product-id">
+          <p id="comp-product-info" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;"></p>
+
+          <div class="form-group">
+            <label for="comp-issue-type">Select Problem Type</label>
+            <select id="comp-issue-type" class="form-control" required>
+              <option value="Damaged Produce / Crushed during Transit">Damaged Produce / Crushed during Transit</option>
+              <option value="Rotten, Spoiled or Expired">Rotten, Spoiled or Expired Produce</option>
+              <option value="Wrong Item or Quantity Mismatch">Wrong Item or Quantity Mismatch</option>
+              <option value="Substandard Quality / Not as Described">Substandard Quality / Not as Described</option>
+              <option value="Severely Delayed Delivery">Severely Delayed Delivery</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="comp-desc">Detailed Description of Damage</label>
+            <textarea id="comp-desc" class="form-control" rows="3" placeholder="Describe how the produce was damaged, quantity spoiled, etc." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="comp-proof-url">Photo Proof URL (Optional)</label>
+            <input type="url" id="comp-proof-url" class="form-control" placeholder="https://images.unsplash.com/... or image link">
+            <small style="color: var(--text-muted); font-size: 0.8rem;">Attach photo evidence to expedite farmer reimbursement.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="comp-resolution">Requested Resolution</label>
+            <select id="comp-resolution" class="form-control" required>
+              <option value="REFUND">Full / Partial Refund</option>
+              <option value="REPLACEMENT">Fresh Batch Replacement</option>
+              <option value="APOLOGY">Formal Explanation</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-complaint-btn">Cancel</button>
+          <button type="submit" class="btn btn-danger btn-sm">Submit Damage Dispute</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Live Order & Farm Origin Tracking Modal -->
+  <div id="tracking-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 780px;">
+      <div class="modal-header" style="background: var(--primary-dark); color: white;">
+        <h3 id="tracking-title" style="margin: 0; font-size: 1.2rem;">🗺️ Live Delivery & Farm Origin Tracker</h3>
+        <button class="modal-close-btn" id="close-tracking-modal" style="color: white;">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <!-- Status & Route Summary Card -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+          <div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; color: #166534; font-weight: 700;">🚜 Farm Origin (Seller)</div>
+            <strong id="track-farm-name" style="color: #14532d; font-size: 1rem;"></strong>
+            <div id="track-farm-location" style="font-size: 0.85rem; color: #334155;"></div>
+            <div id="track-farm-coords" style="font-size: 0.78rem; color: #64748b; font-family: monospace; margin-top: 2px;"></div>
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; text-transform: uppercase; color: #166534; font-weight: 700;">📍 Delivery Destination</div>
+            <strong id="track-consumer-name" style="color: #14532d; font-size: 1rem;"></strong>
+            <div id="track-delivery-address" style="font-size: 0.85rem; color: #334155;"></div>
+            <div id="track-distance-badge" style="display: inline-block; background: #22c55e; color: white; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700; margin-top: 4px;"></div>
+          </div>
+        </div>
+
+        <!-- Interactive Leaflet Map Container -->
+        <div id="tracking-map" style="height: 360px; width: 100%; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 16px;"></div>
+
+        <!-- Transit Milestones Timeline -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+          <div style="font-weight: 700; font-size: 0.88rem; margin-bottom: 8px; color: #1e293b;">Delivery Progress Status:</div>
+          <div style="display: flex; justify-content: space-between; position: relative; font-size: 0.8rem;">
+            <div id="step-placed" style="text-align: center; flex: 1;">
+              <div style="font-size: 1.3rem;">🌱</div>
+              <strong>Harvest Placed</strong>
+            </div>
+            <div id="step-confirmed" style="text-align: center; flex: 1;">
+              <div style="font-size: 1.3rem;">📦</div>
+              <strong>Farm Packed</strong>
+            </div>
+            <div id="step-shipped" style="text-align: center; flex: 1;">
+              <div style="font-size: 1.3rem;">🚚</div>
+              <strong>In Transit</strong>
+            </div>
+            <div id="step-delivered" style="text-align: center; flex: 1;">
+              <div style="font-size: 1.3rem;">🏡</div>
+              <strong>Delivered</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-sm" id="close-tracking-btn">Close Tracker</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS Library -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/api.js"></script>
+  <script src="js/consumer.js"></script>
+</body>
+</html>

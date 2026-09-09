@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout & Payment - Kisan2Consumer (SIH26033)</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 30px;
+      margin: 35px 0 60px;
+    }
+    .payment-option {
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: var(--transition);
+    }
+    .payment-option.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .payment-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 0.8s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @media (max-width: 850px) {
+      .checkout-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        🌾 Kisan<span>2</span>Consumer
+        <span class="sih-tag">Secure Checkout</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html">Produce Catalog</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Injected by api.js -->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div style="padding: 25px 0 0;">
+      <h1 style="font-size: 2rem; color: var(--primary-dark);">Checkout & Escrow Payment</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">SIH26033: Guaranteed direct payments to farmers upon order placement</p>
+    </div>
+
+    <div class="checkout-grid">
+      <!-- Shipping & Payment Form -->
+      <div>
+        <!-- Shipping Address Card -->
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: var(--shadow-sm);">
+          <h3 style="margin-bottom: 18px; color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
+            📦 1. Delivery Address
+          </h3>
+
+          <form id="shipping-form">
+            <div class="form-group">
+              <label for="ship-address">Street Address / House / Flat No.</label>
+              <input type="text" id="ship-address" class="form-control" placeholder="Flat 402, Green Meadows, Andheri West" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ship-city">City / District</label>
+                <input type="text" id="ship-city" class="form-control" placeholder="Mumbai" required>
+              </div>
+              <div class="form-group">
+                <label for="ship-state">State</label>
+                <input type="text" id="ship-state" class="form-control" placeholder="Maharashtra" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="ship-pincode">Pin Code</label>
+                <input type="text" id="ship-pincode" class="form-control" placeholder="400053" required>
+              </div>
+              <div class="form-group">
+                <label for="ship-notes">Delivery Instructions (Optional)</label>
+                <input type="text" id="ship-notes" class="form-control" placeholder="e.g. Ring bell or leave with security">
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Payment Method Selector Card -->
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: var(--shadow-sm);">
+          <h3 style="margin-bottom: 18px; color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
+            💳 2. Payment Method (Simulated Gateway)
+          </h3>
+
+          <div class="payment-option active" data-method="UPI_SIMULATION">
+            <input type="radio" name="payment_choice" value="UPI_SIMULATION" checked>
+            <div>
+              <div style="font-weight: 700;">UPI Direct (Google Pay / PhonePe / BHIM)</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Instant zero-fee escrow transfer to farmer</div>
+            </div>
+          </div>
+
+          <div class="payment-option" data-method="CARD_SIMULATION">
+            <input type="radio" name="payment_choice" value="CARD_SIMULATION">
+            <div>
+              <div style="font-weight: 700;">Credit / Debit Card</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Visa, MasterCard, RuPay</div>
+            </div>
+          </div>
+
+          <div class="payment-option" data-method="NET_BANKING">
+            <input type="radio" name="payment_choice" value="NET_BANKING">
+            <div>
+              <div style="font-weight: 700;">Net Banking</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">All major Indian banks supported</div>
+            </div>
+          </div>
+
+          <div class="payment-option" data-method="COD">
+            <input type="radio" name="payment_choice" value="COD">
+            <div>
+              <div style="font-weight: 700;">Cash on Delivery (Farm-Gate Verification)</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Pay upon physical quality inspection</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary Card -->
+      <div>
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; box-shadow: var(--shadow-sm); position: sticky; top: 90px;">
+          <h3 style="margin-bottom: 18px; color: var(--text-dark);">Order Summary</h3>
+
+          <div id="checkout-items" style="max-height: 250px; overflow-y: auto; margin-bottom: 18px;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 14px;">
+
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem;">
+            <span style="color: var(--text-muted);">Produce Subtotal</span>
+            <strong id="ck-subtotal">₹0.00</strong>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem;">
+            <span style="color: var(--text-muted);">Delivery Fee</span>
+            <span id="ck-delivery" style="color: var(--primary); font-weight: 600;">FREE</span>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 14px;">
+
+          <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+            <span style="font-size: 1.15rem; font-weight: 700;">Total Payable</span>
+            <span id="ck-grand-total" style="font-size: 1.45rem; font-weight: 800; color: var(--primary-dark);">₹0.00</span>
+          </div>
+
+          <button id="btn-pay-now" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+            🔒 Complete Payment & Place Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simulated Payment Processing Modal -->
+  <div id="payment-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 480px; text-align: center; padding: 30px 25px;">
+      <div id="payment-step-processing">
+        <h3 style="margin-bottom: 10px; color: var(--primary-dark);">Agri-Payment Gateway Simulation</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          Secure direct transfer between Consumer and Kisan Bank Account...
+        </p>
+        <div class="payment-spinner"></div>
+        <div id="payment-status-text" style="font-weight: 600; font-size: 0.95rem; color: #475569;">
+          Contacting simulated bank gateway...
+        </div>
+      </div>
+
+      <div id="payment-step-success" style="display: none;">
+        <div style="width: 65px; height: 65px; border-radius: 50%; background: #e8f5e9; color: #2e7d32; font-size: 2.2rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+          ✓
+        </div>
+        <h2 style="color: #1b5e20; font-size: 1.6rem; margin-bottom: 8px;">Order & Payment Confirmed!</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 18px;">
+          Your order has been notified to the farmer. Automated confirmation email has been dispatched.
+        </p>
+
+        <div style="background: #f8faf9; border: 1px dashed var(--border-color); border-radius: 8px; padding: 14px; text-align: left; font-size: 0.88rem; margin-bottom: 20px;">
+          <div>Order Reference: <strong id="success-order-id">#</strong></div>
+          <div>Transaction ID: <strong id="success-txn-id" style="color: var(--primary-dark); font-family: monospace;">-</strong></div>
+          <div>Amount Paid: <strong id="success-amount">₹0</strong></div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <a href="consumer-dashboard.html" class="btn btn-primary" style="flex: 1;">Track My Order</a>
+          <a href="marketplace.html" class="btn btn-outline" style="flex: 1;">Continue Shopping</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    let selectedMethod = "UPI_SIMULATION";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Check auth
+      if (!isLoggedIn()) {
+        showToast("Please sign in to proceed with checkout.", "warning");
+        setTimeout(() => window.location.href = "auth.html?role=consumer", 1000);
+        return;
+      }
+
+      // Pre-fill user delivery address
+      const user = getUser();
+      if (user) {
+        if (user.delivery_address) document.getElementById("ship-address").value = user.delivery_address;
+        if (user.delivery_city) document.getElementById("ship-city").value = user.delivery_city;
+        if (user.delivery_state) document.getElementById("ship-state").value = user.delivery_state;
+        if (user.delivery_pincode) document.getElementById("ship-pincode").value = user.delivery_pincode;
+      }
+
+      renderCheckoutItems();
+
+      // Payment option selector
+      document.querySelectorAll(".payment-option").forEach(opt => {
+        opt.addEventListener("click", () => {
+          document.querySelectorAll(".payment-option").forEach(o => o.classList.remove("active"));
+          opt.classList.add("active");
+          opt.querySelector("input").checked = true;
+          selectedMethod = opt.getAttribute("data-method");
+        });
+      });
+
+      // Submit checkout
+      document.getElementById("btn-pay-now").addEventListener("click", processCheckout);
+    });
+
+    function renderCheckoutItems() {
+      const container = document.getElementById("checkout-items");
+      const cart = getCart();
+
+      if (cart.length === 0) {
+        window.location.href = "cart.html";
+        return;
+      }
+
+      let subtotal = 0;
+      container.innerHTML = cart.map(item => {
+        const itemTotal = item.price_per_unit * item.quantity;
+        subtotal += itemTotal;
+        return `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem;">
+            <div>
+              <strong>${item.title}</strong>
+              <div style="color: var(--text-muted); font-size: 0.8rem;">${item.quantity} ${item.unit} × ₹${item.price_per_unit}</div>
+            </div>
+            <strong>₹${itemTotal.toFixed(2)}</strong>
+          </div>
+        `;
+      }).join("");
+
+      const delivery = subtotal >= 500 ? 0 : 40;
+      const grandTotal = subtotal + delivery;
+
+      document.getElementById("ck-subtotal").textContent = `₹${subtotal.toFixed(2)}`;
+      document.getElementById("ck-delivery").textContent = delivery === 0 ? "FREE" : `₹${delivery.toFixed(2)}`;
+      document.getElementById("ck-grand-total").textContent = `₹${grandTotal.toFixed(2)}`;
+    }
+
+    async function processCheckout() {
+      const address = document.getElementById("ship-address").value.trim();
+      const city = document.getElementById("ship-city").value.trim();
+      const state = document.getElementById("ship-state").value.trim();
+      const pincode = document.getElementById("ship-pincode").value.trim();
+      const notes = document.getElementById("ship-notes").value.trim();
+
+      if (!address || !city || !state || !pincode) {
+        showToast("Please complete your delivery address details.", "warning");
+        return;
+      }
+
+      const cart = getCart();
+      if (cart.length === 0) {
+        showToast("Cart is empty.", "warning");
+        return;
+      }
+
+      const items = cart.map(item => ({
+        product_id: item.id,
+        quantity: item.quantity
+      }));
+
+      const modal = document.getElementById("payment-modal");
+      modal.classList.add("active");
+      const statusText = document.getElementById("payment-status-text");
+
+      try {
+        statusText.textContent = "1/3 Creating direct order with farmers...";
+        // 1. Create order
+        const order = await apiRequest("/api/orders", {
+          method: "POST",
+          body: JSON.stringify({
+            items,
+            shipping_address: address,
+            shipping_city: city,
+            shipping_state: state,
+            shipping_pincode: pincode,
+            shipping_notes: notes,
+            payment_method: selectedMethod
+          })
+        });
+
+        // 2. Simulate payment processing
+        statusText.textContent = "2/3 Simulating instant UPI / Bank escrow authorization...";
+        await new Promise(r => setTimeout(r, 1200));
+
+        statusText.textContent = "3/3 Confirming transaction & dispatching farmer alert...";
+        const paymentRes = await apiRequest(`/api/orders/${order.id}/pay`, {
+          method: "POST",
+          body: JSON.stringify({
+            payment_method: selectedMethod,
+            upi_id: "consumer@mockbank"
+          })
+        });
+
+        // Clear cart
+        clearCart();
+
+        // 3. Show success state
+        document.getElementById("payment-step-processing").style.display = "none";
+        document.getElementById("payment-step-success").style.display = "block";
+        document.getElementById("success-order-id").textContent = `#${paymentRes.id}`;
+        document.getElementById("success-txn-id").textContent = paymentRes.payment_transaction_id;
+        document.getElementById("success-amount").textContent = `₹${paymentRes.grand_total.toFixed(2)}`;
+
+      } catch (err) {
+        modal.classList.remove("active");
+        showToast(err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>

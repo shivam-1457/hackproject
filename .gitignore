@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# SQLite & DB
+*.sqlite3
+*.db
+backend/kisan2consumer.db
+
+# Environment & Secrets
+.env
+.env.local
+
+# Uploads directory contents (preserve folder with .gitkeep)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# IDEs & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
